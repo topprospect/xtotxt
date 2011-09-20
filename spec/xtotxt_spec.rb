@@ -3,11 +3,22 @@ require 'xtotxt'
 
 describe Xtotxt do
   before do
-    @x = Xtotxt.new
-    @input = "pdftext.pdf"
+    @ext = { :pdf  => "/opt/local/bin/xpdf-pdftotext",
+             :doc  => "/opt/local/bin/antiword",
+             :docx => "/usr/local/bin/docx2txt.pl" }
+
+    @x = Xtotxt.new(@ext)
+    @input = "test.pdf"
   end
 
   describe "convert" do
+
+    it "is created with a single hash argument containing convertors" do
+      lambda { Xtoxt.new }.should raise_error
+
+      lambda { Xtoxt.new(1, 2) }.should raise_error
+    end
+
     context "input parameters and results" do
 
       # TODO make pending
@@ -18,8 +29,8 @@ describe Xtotxt do
       #end
 
       it "accepts one input file argument (of the right type)" do
-         #lambda { @x.convert("pdftext.pdf") }.should_not raise_error
-        @x.convert("pdftext.pdf")
+         #lambda { @x.convert("test.pdf") }.should_not raise_error
+        @x.convert("test.pdf")
       end
 
       it "needs the input file argument" do
@@ -35,17 +46,29 @@ describe Xtotxt do
       end
 
       it "returns a string" do
-        text = @x.convert("pdftext.pdf")
+        text = @x.convert("test.pdf")
         text.class.should == String
       end
 
     end
   end
 
-  it "converts a pdf document" do
-    text = @x.convert("pdftext.pdf")
+  it "converts a pdf document correctly" do
+    text = @x.convert("test.pdf")
 
-    text.should_not be_empty
+    text.should == "three pigheaded piglets had a plan\n\n\f"
+  end
+
+  it "converts a doc document correctly" do
+    text = @x.convert("test.doc")
+
+    text.should == "\nthree pigheaded piglets had a plan\n\n"
+  end
+
+  it "converts a docx document correctly" do
+    text = @x.convert("test.docx")
+
+    text.should == "three pigheaded piglets had a plan\n\n"
   end
 
 end

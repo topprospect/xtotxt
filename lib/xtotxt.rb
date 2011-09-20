@@ -1,7 +1,5 @@
 class Xtotxt
 
-  @@pdf2txt = "xpdf-pdftotxt"
-
   def convert(input_file_name)
     path_list = input_file_name.split(".")
 
@@ -15,13 +13,17 @@ class Xtotxt
 
     command_line = case ext
     when "pdf"
-        "#{@@pdf2txt} #{input_file_name}"
+        "#{@ext[:pdf]} #{input_file_name}"
+    when "doc"
+        "#{@ext[:doc]} > #{output_file} #{input_file_name}"
+    when "docx"
+        "#{@ext[:docx]} #{input_file_name}"
     else
         raise "have no way to convert #{ext} yet"
     end
 
     puts "executing: #{command_line}"
-    command_output = `command_line`
+    command_output = `#{command_line}`
     text = if $? == 0
       File.read(output_file)
     else
@@ -29,6 +31,10 @@ class Xtotxt
     end
     puts "the text is: #{text}"
     text
+  end
+
+  def initialize(ext)
+    @ext = ext || @@ext
   end
 
   puts "xtotxt is included"
