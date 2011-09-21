@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Xtotxt::VERSION
   s.authors     = ["Alexy Khrabrov"]
   s.email       = ["alexy@topprospect.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "http://www.topprospect.com"
+  s.summary     = %q{Convert pdf, doc and docx to plain text}
+  s.description = %q{A simple wrapper calling, for each supported input format, a given command-line tool}
 
   s.rubyforge_project = "xtotxt"
 

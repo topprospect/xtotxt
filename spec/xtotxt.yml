@@ -1,0 +1,3 @@
+:pdf:  "/opt/local/bin/xpdf-pdftotext"
+:doc:  "/opt/local/bin/antiword"
+:docx: "/usr/local/bin/docx2txt.pl"
