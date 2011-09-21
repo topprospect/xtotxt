@@ -22,7 +22,7 @@ class Xtotxt
 
     ext = path_list.pop
 
-    raise("not a supported document extension: #{ext}") unless %w{pdf doc docx}.member?(ext)
+    raise("not a supported document extension: #{ext}") unless %w{pdf doc docx odt}.member?(ext)
 
     output_file = (path_list << "txt").join(".")
 
@@ -33,6 +33,8 @@ class Xtotxt
         "#{@ext[:doc]} > #{output_file} #{input_file_name}"
     when "docx"
         "#{@ext[:docx]} #{input_file_name}"
+    when "odt":
+        "#{@ext[:odt]} #{input_file_name} --output=#{output_file}"
     else
         raise "have no way to convert #{ext} yet"
     end
