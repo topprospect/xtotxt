@@ -1,0 +1,3 @@
+spec/fixtures/test.txt
+*.gem
+.idea
