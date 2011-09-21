@@ -2,10 +2,12 @@ require 'spec_helper'
 require 'xtotxt'
 
 describe Xtotxt do
+  before(:all) do
+    @input_prefix = "#{Pathname.new(__FILE__).dirname}/fixtures/test"
+  end
 
   before do
     @x = Xtotxt.new
-    @input_prefix = "fixtures/test"
   end
 
   describe "convert" do

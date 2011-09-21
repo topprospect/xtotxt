@@ -57,8 +57,6 @@ class Xtotxt
         Xtotxt.read_config
         @@ext
       end
-
-    puts "@ext: #{@ext}, @@ext: #{@@ext}"
   end
 
 end
