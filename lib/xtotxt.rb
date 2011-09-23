@@ -22,7 +22,7 @@ class Xtotxt
 
     ext = path_list.pop
 
-    raise("not a supported document extension: #{ext}") unless %w{pdf doc docx odt}.member?(ext)
+    raise("not a supported document extension: #{ext}") unless %w{pdf doc docx odt rtf html}.member?(ext)
 
     output_file = (path_list << "txt").join(".")
 
@@ -35,9 +35,15 @@ class Xtotxt
         "#{@ext[:docx]} #{input_file_name}"
     when "odt":
         "#{@ext[:odt]} #{input_file_name} --output=#{output_file}"
+    when "rtf":
+        "#{@ext[:rtf]} --text #{input_file_name} > #{output_file}"
+    when "html":
+        "#{@ext[:html]} -o #{output_file} #{input_file_name}"
     else
         raise "have no way to convert #{ext} yet"
     end
+
+    puts "executing: #{command_line}"
 
     command_output = `#{command_line}`
     text = if $? == 0
@@ -45,7 +51,13 @@ class Xtotxt
     else
       raise "Failed to convert #{input_file_name}. Exit status: #{$?.exitstatus}.  Output: #{command_output}"
     end
-    text
+
+    case ext
+      when "rtf"
+        skip_unrtf_header(text)
+      else
+        text
+    end
   end
 
   def initialize(ext=nil)
@@ -59,6 +71,21 @@ class Xtotxt
         Xtotxt.read_config
         @@ext
       end
+  end
+
+  private
+
+  def skip_unrtf_header(text)
+    a = text.lines.to_a
+    while true
+      unless a.shift =~ /^###/
+        unless a.shift == "-----------------\n"
+          raise "cannot parse rtf"
+        end
+        break
+      end
+    end
+    a.join
   end
 
 end

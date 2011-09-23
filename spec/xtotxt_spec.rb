@@ -20,7 +20,7 @@ describe Xtotxt do
 
     context "input parameters and results" do
 
-      %w{pdf doc docx odt}.each do |ext|
+      %w{pdf doc docx odt rtf}.each do |ext|
         it "accepts an #{ext} input" do
           lambda { @x.convert("#{@input_prefix}.#{ext}") }.should_not raise_error
         end
@@ -51,10 +51,23 @@ describe Xtotxt do
     text.should == "three pigheaded piglets had a plan\n\n"
   end
 
-  it "converts a odt document correctly" do
+  it "converts an odt document correctly" do
     text = @x.convert("#{@input_prefix}.odt")
 
     text.should == "\nthree pigheaded piglets had a plan\n\n"
   end
+
+  it "converts an rtf document correctly" do
+    text = @x.convert("#{@input_prefix}.rtf")
+
+    text.should == "three pigheaded piglets had a plan\n"
+  end
+
+  it "converts an html document correctly" do
+    text = @x.convert("#{@input_prefix}.html")
+
+    text.should == "three pigheaded piglets had a plan\n"
+  end
+
 
 end
