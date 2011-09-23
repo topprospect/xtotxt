@@ -43,9 +43,9 @@ class Xtotxt
         raise "have no way to convert #{ext} yet"
     end
 
-    puts "executing: #{command_line}"
+    #puts "executing: #{command_line}"
 
-    command_output = `#{command_line}`
+    command_output = `#{command_line} 2>/dev/null`
     text = if $? == 0
       File.read(output_file)
     else
