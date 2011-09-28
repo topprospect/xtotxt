@@ -1,6 +1,6 @@
 :pdf:  "/opt/local/bin/xpdf-pdftotext"
 :doc:  "/opt/local/bin/antiword"
 :docx: "/usr/local/bin/docx2txt.pl"
-:odt:  "/usr/local/bin/odt2txt"
+:odt:  "/opt/local/bin/odt2txt"
 :rtf:  "/opt/local/bin/unrtf -P /opt/local/lib/unrtf"
 :html: "/opt/local/bin/html2text"

@@ -36,37 +36,37 @@ describe Xtotxt do
   it "converts a pdf document correctly" do
     text = @x.convert("#{@input_prefix}.pdf")
 
-    text.should == "three pigheaded piglets had a plan\n\n\f"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
   it "converts a doc document correctly" do
     text = @x.convert("#{@input_prefix}.doc")
 
-    text.should == "\nthree pigheaded piglets had a plan\n\n"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
   it "converts a docx document correctly" do
     text = @x.convert("#{@input_prefix}.docx")
 
-    text.should == "three pigheaded piglets had a plan\n\n"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
   it "converts an odt document correctly" do
     text = @x.convert("#{@input_prefix}.odt")
 
-    text.should == "\nthree pigheaded piglets had a plan\n\n"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
   it "converts an rtf document correctly" do
     text = @x.convert("#{@input_prefix}.rtf")
 
-    text.should == "three pigheaded piglets had a plan\n"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
   it "converts an html document correctly" do
     text = @x.convert("#{@input_prefix}.html")
 
-    text.should == "three pigheaded piglets had a plan\n"
+    text.strip.should == "three pigheaded piglets had a plan"
   end
 
 
