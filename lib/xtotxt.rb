@@ -1,5 +1,7 @@
 require 'yaml'
 
+class XtotxtError < StandardError; end
+
 class Xtotxt
   @@config_file_name = "xtotxt.yml"
   @@dirs_to_check    = %w{. ~ /etc}
@@ -15,6 +17,7 @@ class Xtotxt
         end
       end
     end
+    @@ext = @ext_default
   end
 
   def convert(input_file_name)
@@ -22,7 +25,7 @@ class Xtotxt
 
     ext = path_list.pop
 
-    raise("not a supported document extension: #{ext}") unless %w{pdf doc docx odt rtf html}.member?(ext)
+    raise XtotxtError.new("not a supported document extension: #{ext}") unless %w{pdf doc docx odt rtf html}.member?(ext)
 
     output_file = (path_list << "txt").join(".")
 
@@ -40,7 +43,7 @@ class Xtotxt
     when "html":
         "#{@ext[:html]} -o #{output_file} #{input_file_name}"
     else
-        raise "have no way to convert #{ext} yet"
+        raise XtotxtError.new("have no way to convert #{ext} yet")
     end
 
     #puts "executing: #{command_line}"
@@ -49,7 +52,7 @@ class Xtotxt
     text = if $? == 0
       File.read(output_file)
     else
-      raise "Failed to convert #{input_file_name}. Exit status: #{$?.exitstatus}.  Output: #{command_output}"
+      raise XtotxtError.new("Failed to convert #{input_file_name}. Exit status: #{$?.exitstatus}.  Output: #{command_output}")
     end
 
     case ext
