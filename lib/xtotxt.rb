@@ -64,6 +64,8 @@ class Xtotxt
   end
 
   def initialize(ext=nil)
+    @version = Xtotxt::VERSION
+
     @ext =
       case
       when ext
