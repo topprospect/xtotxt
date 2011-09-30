@@ -3,6 +3,9 @@ require 'yaml'
 class XtotxtError < StandardError; end
 
 class Xtotxt
+  VERSION = 0.5
+  SUPPORTED_EXTENSIONS = %w{pdf doc docx odt rtf html}
+
   @@config_file_name = "xtotxt.yml"
   @@dirs_to_check    = %w{. ~ /etc}
   @@ext              = nil
@@ -25,7 +28,7 @@ class Xtotxt
 
     ext = path_list.pop
 
-    raise XtotxtError.new("not a supported document extension: #{ext}") unless %w{pdf doc docx odt rtf html}.member?(ext)
+    raise XtotxtError.new("not a supported document extension: #{ext}") unless SUPPORTED_EXTENSIONS.member?(ext)
 
     output_file = (path_list << "txt").join(".")
 
@@ -64,8 +67,6 @@ class Xtotxt
   end
 
   def initialize(ext=nil)
-    @version = Xtotxt::VERSION
-
     @ext =
       case
       when ext

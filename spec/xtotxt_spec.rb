@@ -4,6 +4,7 @@ require 'xtotxt'
 describe Xtotxt do
   before(:all) do
     @input_prefix = "#{Pathname.new(__FILE__).dirname}/fixtures/test"
+    @text = "three pigheaded piglets had a plan"
   end
 
   before do
@@ -36,37 +37,37 @@ describe Xtotxt do
   it "converts a pdf document correctly" do
     text = @x.convert("#{@input_prefix}.pdf")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
   it "converts a doc document correctly" do
     text = @x.convert("#{@input_prefix}.doc")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
   it "converts a docx document correctly" do
     text = @x.convert("#{@input_prefix}.docx")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
   it "converts an odt document correctly" do
     text = @x.convert("#{@input_prefix}.odt")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
   it "converts an rtf document correctly" do
     text = @x.convert("#{@input_prefix}.rtf")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
   it "converts an html document correctly" do
     text = @x.convert("#{@input_prefix}.html")
 
-    text.strip.should == "three pigheaded piglets had a plan"
+    text.strip.should == @text
   end
 
 
