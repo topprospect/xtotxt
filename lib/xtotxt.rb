@@ -3,8 +3,8 @@ require 'yaml'
 class XtotxtError < StandardError; end
 
 class Xtotxt
-  VERSION = 0.5
-  SUPPORTED_EXTENSIONS = %w{pdf doc docx odt rtf html}
+  VERSION = 0.6
+  SUPPORTED_EXTENSIONS = %w{txt pdf doc docx odt rtf html}
 
   @@config_file_name = "xtotxt.yml"
   @@dirs_to_check    = %w{. ~ /etc}
@@ -23,42 +23,46 @@ class Xtotxt
     @@ext = @ext_default
   end
 
-  def convert(input_file_name)
-    path_list = input_file_name.split(".")
+  def convert(input_file_name,tmp_dir = "/tmp",retain_output=false)
+    dot_ext = File.extname(input_file_name)
+    file_ext = dot_ext.slice(1,dot_ext.length)
+    raise XtotxtError.new("not a supported document extension: #{file_ext}") unless SUPPORTED_EXTENSIONS.member?(file_ext)
 
-    ext = path_list.pop
+    file_base = File.basename(input_file_name, file_ext)
 
-    raise XtotxtError.new("not a supported document extension: #{ext}") unless SUPPORTED_EXTENSIONS.member?(ext)
+    output_file_name = "#{tmp_dir}/#{file_base}txt"
 
-    output_file = (path_list << "txt").join(".")
-
-    command_line = case ext
+    command_line = case file_ext
+    when "txt"
+        "cp -p #{input_file_name}                  #{output_file_name}"
     when "pdf"
-        "#{@ext[:pdf]} #{input_file_name}"
+        "#{@ext[:pdf]} #{input_file_name} -      > #{output_file_name}"
     when "doc"
-        "#{@ext[:doc]} > #{output_file} #{input_file_name}"
+        "#{@ext[:doc]} #{input_file_name}        > #{output_file_name}"
     when "docx"
-        "#{@ext[:docx]} #{input_file_name}"
+        "#{@ext[:docx]} #{input_file_name}         #{output_file_name}"
     when "odt":
-        "#{@ext[:odt]} #{input_file_name} --output=#{output_file}"
+        "#{@ext[:odt]} #{input_file_name} --output=#{output_file_name}"
     when "rtf":
-        "#{@ext[:rtf]} --text #{input_file_name} > #{output_file}"
+        "#{@ext[:rtf]} --text #{input_file_name} > #{output_file_name}"
     when "html":
-        "#{@ext[:html]} -o #{output_file} #{input_file_name}"
+        "#{@ext[:html]} -o #{output_file_name} #{input_file_name}"
     else
-        raise XtotxtError.new("have no way to convert #{ext} yet")
+        raise XtotxtError.new("have no way to convert #{file_ext} yet")
     end
 
     #puts "executing: #{command_line}"
 
-    command_output = `#{command_line} 2>/dev/null`
+    command_output = `#{command_line} 2>/dev/null` if command_line and not command_line.empty?
     text = if $? == 0
-      File.read(output_file)
+      File.read(output_file_name)
     else
       raise XtotxtError.new("Failed to convert #{input_file_name}. Exit status: #{$?.exitstatus}.  Output: #{command_output}")
     end
 
-    case ext
+    File.delete(output_file_name) unless retain_output
+
+    case file_ext
       when "rtf"
         skip_unrtf_header(text)
       else

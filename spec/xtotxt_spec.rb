@@ -34,6 +34,12 @@ describe Xtotxt do
     end
   end
 
+  it "converts a text document correctly" do
+    text = @x.convert("#{@input_prefix}.txt")
+
+    text.strip.should == @text
+  end
+
   it "converts a pdf document correctly" do
     text = @x.convert("#{@input_prefix}.pdf")
 
