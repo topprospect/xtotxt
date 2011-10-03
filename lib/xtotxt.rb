@@ -3,7 +3,7 @@ require 'yaml'
 class XtotxtError < StandardError; end
 
 class Xtotxt
-  VERSION = 0.6
+  VERSION = 0.7
   SUPPORTED_EXTENSIONS = %w{txt pdf doc docx odt rtf html}
 
   @@config_file_name = "xtotxt.yml"
@@ -46,6 +46,7 @@ class Xtotxt
     when "rtf":
         "#{@ext[:rtf]} --text #{input_file_name} > #{output_file_name}"
     when "html":
+        # NB:
         "#{@ext[:html]} -o #{output_file_name} #{input_file_name}"
     else
         raise XtotxtError.new("have no way to convert #{file_ext} yet")
@@ -87,13 +88,7 @@ class Xtotxt
 
   def skip_unrtf_header(text)
     a = text.lines.to_a
-    while true
-      unless a.shift =~ /^###/
-        unless a.shift == "-----------------\n"
-          raise "cannot parse rtf"
-        end
-        break
-      end
+    while a.shift != "-----------------\n"
     end
     a.join
   end
