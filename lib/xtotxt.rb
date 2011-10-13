@@ -3,8 +3,9 @@ require 'yaml'
 class XtotxtError < StandardError; end
 
 class Xtotxt
-  VERSION = 0.7
+  VERSION = 0.8
   SUPPORTED_EXTENSIONS = %w{txt pdf doc docx odt rtf html}
+  TMP_DIR = "/tmp"
 
   @@config_file_name = "xtotxt.yml"
   @@dirs_to_check    = %w{. ~ /etc}
@@ -23,14 +24,14 @@ class Xtotxt
     @@ext = @ext_default
   end
 
-  def convert(input_file_name,tmp_dir = "/tmp",retain_output=false)
-    dot_ext = File.extname(input_file_name)
+  def convert_file(input_file_name, tmp_dir = TMP_DIR)
+    dot_ext  = File.extname(input_file_name)
     file_ext = dot_ext.slice(1,dot_ext.length)
     raise XtotxtError.new("not a supported document extension: #{file_ext}") unless SUPPORTED_EXTENSIONS.member?(file_ext)
 
-    file_base = File.basename(input_file_name, file_ext)
+    file_base = File.basename(input_file_name, dot_ext)
 
-    output_file_name = "#{tmp_dir}/#{file_base}txt"
+    output_file_name = "#{tmp_dir}/#{file_base}.txt"
 
     command_line = case file_ext
     when "txt"
@@ -55,21 +56,29 @@ class Xtotxt
     #puts "executing: #{command_line}"
 
     command_output = `#{command_line} 2>/dev/null` if command_line and not command_line.empty?
-    text = if $? == 0
-      File.read(output_file_name)
+    if $? == 0 && File.exists?(output_file_name)
+      File.new(output_file_name,"r")
     else
       raise XtotxtError.new("Failed to convert #{input_file_name}. Exit status: #{$?.exitstatus}.  Output: #{command_output}")
     end
+  end
 
-    File.delete(output_file_name) unless retain_output
 
-    case file_ext
-      when "rtf"
-        skip_unrtf_header(text)
-      else
-        text
+  def convert(input_file_name,tmp_dir = TMP_DIR,retain_output=false)
+
+    file = convert_file(input_file_name, tmp_dir)
+    text = file.read
+    file.close
+    File.delete(file.path) unless retain_output
+
+    case File.extname(input_file_name)
+    when ".rtf"
+      skip_unrtf_header(text)
+    else
+      text
     end
   end
+
 
   def initialize(ext=nil)
     @ext =
